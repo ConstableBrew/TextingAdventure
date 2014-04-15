@@ -11,7 +11,7 @@ var config 			= require('./app/config/config.js');
 var database		= require('./app/database.js');
 
 sms.initialize(config.SMS.apiKey, config.SMS.apiSecret, config.SMS.sender, debugOn);
-sms.sendTextMessage('3104205285', 'Server started');
+sms.sendTextMessage('13104205285', 'Server started');
 
 
 
