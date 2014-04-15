@@ -98,7 +98,8 @@ function sendRequest(path, method, callback) {
 	},
 	request = https.request(options),
 	responseReturn='';
-	
+	log(request);
+
 	request.end();
 	request.on('response', function(response){ 
 		response.setEncoding('utf8'); 
