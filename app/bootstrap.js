@@ -72,7 +72,7 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 	}
 
 	// A basic ZVM runner
-	exports.runner = function runner( vm, inputCommands )	{
+	function runner( vm, inputCommands )	{
 		var orders, order, code, i, len;
 		inputCommands = inputCommands || [];
 		
@@ -137,5 +137,7 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 		runner( vm, inputCommands );
 		return vm;
 	};
+
+	exports.runner = runner;
 
 })();

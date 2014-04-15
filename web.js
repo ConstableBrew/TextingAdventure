@@ -10,7 +10,8 @@ var debugOn 		= true;
 var config 			= require('./app/config/config.js');
 var database		= require('./app/database.js');
 
-sms.initialize(config.SMS.apiKey, config.SMS.apiSecret, config.SMS.sender);
+sms.initialize(config.SMS.apiKey, config.SMS.apiSecret, config.SMS.sender, debugOn);
+
 
 
 
@@ -27,7 +28,10 @@ app.get('/', function(req, res){
 app.get('/smsinbound', function(req, res){
 	var user, input, game;
 	// only process short text messages
-	if( (req.query.type === 'text') && (typeof req.query.concat === 'undefined') ) {
+	if( (req.query.type === 'text') 
+		&& (typeof req.query.concat === 'undefined') 
+		&& (typeof req.query.msisdn !== 'undefined')
+	) {
 
 		user = req.query.msisdn || 0;
 		input = req.query.text || '';

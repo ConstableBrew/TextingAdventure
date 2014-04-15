@@ -35,7 +35,7 @@ var ERROR_MESSAGES = {
 
 // debugon is optional
 exports.initialize = function(userKey, userSecret, sender, debugon) {
-	if (!apiKey || !apiSecret || !sender) {
+	if (!userKey || !userSecret || !sender) {
 		throw 'key, secret, and sender cannot be empty, set valid values';
 	}
 	apiKey = userKey;
@@ -56,7 +56,7 @@ exports.sendTextMessage = function(recipient, message, opts, callback) {
 		sendError(callback, new Error(ERROR_MESSAGES.msg));
 	} else {
 		if (!opts) { opts = {}; }
-		opts.from = sender;
+		opts.from = fromAddress;
 		opts.to = recipient;
 		opts.text = message;
 		sendMessage(opts, callback);
@@ -83,7 +83,7 @@ function sendMessage(data, callback) {
 
 function sendRequest(path, method, callback) {
 	if (!initialized) {
-		throw 'nexmo not initialized, call nexmo.initialize(userKey, userSecret, sender) first before calling any nexmo API';
+		throw 'nexmo not initialized, call nexmo.initialize() first before calling any nexmo API';
 	}
 	if (typeof method == 'function') {
 		callback = method;
@@ -95,8 +95,9 @@ function sendRequest(path, method, callback) {
 		path: path,
 		method: method,
 		headers: headers
-		},
-		request = https.request(options);
+	},
+	request = https.request(options),
+	responseReturn='';
 	
 	request.end();
 	request.on('response', function(response){ 
