@@ -47,7 +47,7 @@ app.get('/smsinbound', function(req, res){
 			ifvms.runner(game, input);
 			log('Returning user + ' + user, 'Active users:' + database.activeGames.length);
 		}
-		sms.sendTextMessage(user, game.log);
+		sms.sendTextMessage(user, game.log.substring(0,150));
 		game.log = '';
 	}
 })
