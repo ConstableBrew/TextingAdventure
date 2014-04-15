@@ -43,8 +43,7 @@ exports.initialize = function(userKey, userSecret, sender, debugon) {
 	fromAddress = sender;
 	var authentication = {
 		"api_key": apiKey,
-		"api_secret": apiSecret,
-		"from": fromAddress
+		"api_secret": apiSecret
 	};
 	msgpath += querystring.stringify(authentication);
 	debugOn = debugon;
