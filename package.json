@@ -1,0 +1,25 @@
+{
+  "name": "TextingAdventure",
+  "title": "TextingAdventure",
+  "version": "0.1",
+  "author": "Michael Brewer <constablebrew@gmail.com>",
+  "main": "web.js",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "express": "~3.x",
+    "iconv-lite": "~0.2.7"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  },
+  "version": "1.0.0",
+  "author": "Michael Brewer",
+  "repository": {
+  },
+  "license": "BSD",
+  "devDependencies": {
+  }
+}
