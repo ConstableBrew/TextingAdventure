@@ -31,31 +31,34 @@ app.get('/smsinbound', function(req, res){
 	if( (req.query.type === 'text') 
 		&& (typeof req.query.concat === 'undefined') 
 		&& (typeof req.query.msisdn !== 'undefined')
+		&& (typeof req.query.text   !== 'undefined')
 	) {
 
 		user = req.query.msisdn || 0;
-		input = req.query.text || '';
+		input = (req.query.text || '').split('\n');
 		game = database.activeGames[user];
 
 		if (typeof game === 'undefined') {
 			// Create a new game
+			log('New user ' + user + ', Active users:' + database.activeGames.length);
 			game = ifvms.zvm(config.defaultStoryPath, input);
+			game.outputEvent = console.log;
 			database.activeGames[user] = game;
-			log('New user ' + user, 'Active users:' + database.activeGames.length);
+			
 		}else{
 			// Continue an existing game
-			ifvms.runner(game, input);
-			log('Returning user + ' + user, 'Active users:' + database.activeGames.length);
+			log('Returning user + ' + user + ', Active users:' + database.activeGames.length);
+			//ifvms.runner(game, input);
+			game.inputEvent(input);
+			
 		}
-		sms.sendTextMessage(user, game.log.substring(0,150));
+		//sms.sendTextMessage(user, game.log.slice(-160));
+		log(game.log.slice(-160));
 		game.log = '';
 	}
 })
 
 // serve up all other assets -----------------------------------------------
-app.get('/:file', function(req, res){
-	res.sendfile('/' + req.params.file);
-});
 app.get('/:folder/:file', function(req, res){
 	res.sendfile('/' + req.params.folder + '/' + req.params.file);
 });

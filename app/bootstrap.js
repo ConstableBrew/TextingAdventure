@@ -72,9 +72,9 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 	}
 
 	// A basic ZVM runner
-	function runner( vm, inputCommands )	{
+	function runner( vm, inputCommandsArray )	{
 		var orders, order, code, i, len;
-		inputCommands = inputCommands || [];
+		inputCommandsArray = inputCommandsArray || [];
 		
 		vm.run();
 		
@@ -100,8 +100,8 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 				}
 				
 				// Line input
-				else if ( code === 'read' && inputCommands.length ) {
-					order.response = inputCommands.shift();
+				else if ( code === 'read' && inputCommandsArray.length ) {
+					order.response = inputCommandsArray.shift();
 					vm.inputEvent( order ); // Calls run
 				}
 				
@@ -119,7 +119,7 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 	}
 
 	// A simple function to run a particular story, optionally with a list of commands
-	exports.zvm = function( path, inputCommands )
+	exports.zvm = function( path, inputCommandsArray )
 	{
 		var fs = require( 'fs' );
 		var iconv = require( 'iconv-lite' );
@@ -134,7 +134,7 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 		});
 		vm.restart();
 		vm.log = '';
-		runner( vm, inputCommands );
+		runner( vm, inputCommandsArray );
 		return vm;
 	};
 

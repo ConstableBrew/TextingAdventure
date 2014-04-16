@@ -101,12 +101,14 @@ function sendRequest(path, method, callback) {
 
 	request.end();
 	request.on('response', function(response){ 
+		log('nexmo response started');
 		response.setEncoding('utf8'); 
 		response.on('data', function(chunk){ 
+			log('nexmo data received');
 			responseReturn += chunk;
 		});
 		response.on('end',function(){ 
-			log('nexmo response ended');
+			log('nexmo response ended with responseReturn data:' + responseReturn);
 			if (callback) {
 				var retJson = responseReturn,
 					err = null;
