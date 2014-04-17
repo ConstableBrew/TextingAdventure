@@ -17,27 +17,34 @@ app.use(express.static(__dirname + '/public'));	// Set static file location
 
 
 function handleGameInput(user, input, game){
-	var output;
+	var output,
+		counter = 0,
+		code = '';
 
 	if (typeof game === 'undefined') {
 		// Create a new game
 		log('New user ' + user);
 		game = ifvms.zvm(config.defaultStoryPath); //, log);
 		database.activeGames[user] = game;
+		input = config.defaultWalkThrough;
 	}else{
 		// Continue an existing game
 		log('Returning user ' + user);
 	}
 
+	
 	if(typeof input === 'string'){
 		input = input.split('\n');
 		input.forEach(function(e){
+			e += '\r'; // Add the end character back on
 			game.inputText(e);
 		});
 	}
+	
+	while(game.inputBuffer.length && counter++ < 40){
+		game.go();
+	}
 
-	game.go();
-	game.go();
 	output = game.getText(true);
 	return output;
 }

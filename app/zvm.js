@@ -1255,7 +1255,7 @@ var ZVMUI = Class.subClass({
 				text: this.buffer,
 				props: this.format()
 			};
-			
+
 			( this.currentwin ? this.status : this.e.orders ).push( order );
 			this.buffer = '';
 		}
@@ -3505,6 +3505,7 @@ disassemble: function()
 			{
 				// Tokenise the response
 				this.tokenise( data.buffer, data.parse );
+				log('3511 inputEvent() ');
 			}
 		}
 		
@@ -3674,7 +3675,8 @@ VM.prototype.getText = function getText( clearLog ) {
 // Handles stream output from the vm, parsing text to vm.log
 VM.prototype.go = function go() {
 	var orders = this.orders, 
-		order , code, i, len;
+		order , code, i, len,
+		input;
 
 	this.run();
 
@@ -3689,24 +3691,28 @@ VM.prototype.go = function go() {
 			}
 		} else if(code === 'read' && this.inputBuffer.length) {
 			// Text input
-			order.response = this.inputBuffer.shift();
+			input = this.inputBuffer.shift();
+			log('input for read:"' + input + '"');
+			order.response = input;
 			this.inputEvent(order); // Calls run
 		} else if(code === 'char' && this.inputBuffer.length) {
 			// Char input
 			// Grab just one character from the input buffer
 			// TODO: this is sloppy...
-			order.response = this.inputBuffer[0].slice(0,1);
+			input = this.inputBuffer[0].slice(0,1);
+			order.response = input;
 			this.inputBuffer[0] = this.inputBuffer[0].slice(1);
+			log('input for char:"' + input + '"');
+			log('revised input buffer:' + this.inputBuffer[0])
 			if(!this.inputBuffer[0].length){ this.inputBuffer.shift(); }
 			this.inputEvent(order); // Calls run
 		} else if(code === 'find') {
 			// No op
 		} else {
-			//log('function go() exit on code:' + code);
-			//return; // return on anything else
+			return; // return on anything else
 		}
 
-		orders.splice(i--,1); // TODO: Not sure if I should be doing this... but it gets rid of duplicate stream messages
+		//orders.splice(i--,1); // TODO: Not sure if I should be doing this... but it gets rid of duplicate stream messages
 	}
 }
 

@@ -151,8 +151,9 @@ if( typeof userId === 'undefined'
 	console.log('user', userId);
 }
 
+// TODO: make things not so backwards for autorefresh
 //interval = !localStorage.getItem('autoRefresh');
-interval = true; // For now, start with autorefresh off.
+interval = true; // For now, start with autorefresh Off. (set to true because we toggle it.)
 toggleAutoRefresh();
 display.innerHTML = history;
 display.scrollTop = display.scrollHeight;

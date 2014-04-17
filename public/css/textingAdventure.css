@@ -2,8 +2,8 @@ html, body
 {
 	color: #ccc;
 	background-color: #555;
-	font-size: 8pt;
-	font-family: monospace;
+	font-size: 9pt;
+	
 	margin: 0;
 	padding: 0;
 }
@@ -71,6 +71,8 @@ h2
 	background-color: #555;
 	padding: 10px;
 	font-size: 12pt;
+	font-family: monospace;
+	opacity: 0.9;
 }
 
 
@@ -79,10 +81,12 @@ h2
 	position: fixed;
 	overflow-y: scroll;
 	word-wrap: break-word;
-	width: 100%;
-    height: -webkit-calc(100% - 74px);
-	height:    -moz-calc(100% - 74px);
-    height:         calc(100% - 74px);
+    width: -webkit-calc(100% - 20px);
+	width:    -moz-calc(100% - 20px);
+    width:         calc(100% - 20px);
+    height: -webkit-calc(100% - 98px);
+	height:    -moz-calc(100% - 98px);
+    height:         calc(100% - 98px);
     top: 24px;
     left: 0px;
     background-color: #000;
