@@ -36,11 +36,14 @@ function handleGameInput(user, input, game){
 	if(typeof input === 'string'){
 		input = input.split('\n');
 		input.forEach(function(e){
-			e += '\r'; // Add the end character back on
-			game.inputText(e);
+			//e += '\r'; // Add the end character back on
+			if(e.length > 0){
+				game.inputText(e);
+			}
 		});
 	}
 	
+	game.go();
 	while(game.inputBuffer.length && counter++ < 40){
 		game.go();
 	}
@@ -80,11 +83,11 @@ app.get('/smsinbound', function(req, res){
 		user = req.query.msisdn || 0;
 		input = req.query.text || '';
 		game = database.activeGames[user];
-
+		
 		output = handleGameInput(user, input, game);
-		//output = JSON.stringify(output).replace(/\\r/g, '\n');
-		//output = JSON.parse(output);
-		//sms.sendTextMessage(user, output.slice(-3000));
+		output = JSON.stringify(output).replace(/\\r/g, '\n');
+		output = JSON.parse(output);
+		sms.sendTextMessage(user, output.slice(-3000));
 	}
 	res.send(200); // TODO: Validate that the query parameters are valid or not and send 400 if necessary
 })
@@ -127,6 +130,9 @@ app.get('/kill', function(req, res){
 // serve up all other assets -----------------------------------------------
 app.get('/:folder/:file', function(req, res){
 	res.sendfile('/' + req.params.folder + '/' + req.params.file);
+});
+app.get('/:file', function(req, res){
+	res.sendfile('/' + req.params.file);
 });
 
 app.listen(config.port, function() {

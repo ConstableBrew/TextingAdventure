@@ -22,7 +22,11 @@ const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
 	'instead of your current submit.<br />\n' +
 	'<br />\n' + 
 	'<br />\n' + 
-	'To get started, just type the word "about" and press enter.<br />\n';
+	'To get started, just type the word "south" and press enter.<br />\n' +
+	'You can do many more things than just walk around. You may want<br />\n' + 
+	'to try things like "open window", "get knife" or "kill troll with sword".<br />\n' + 
+	'Check out this <a href="./PlaySomeInteractiveFiction.html">handy reference</a> for more helpful tips.<br />\n' + 
+	'<br />\n';
 
 var userId = localStorage.getItem('userId'),
 	history = DEFAULT_HISTORY,
@@ -123,17 +127,18 @@ function keypress(event){
 	}
 }
 
-function toggleAutoRefresh(){
+function toggleAutoRefresh(forceOn){
 	// Toggle auto polling interval
-	if(interval){
+	forceOn = forceOn || !interval;
+	if(forceOn){
+		interval = setInterval(play, 1000);
+		autoRefresh.className = 'active';
+	}else{
 		clearInterval(interval);
 		interval = 0;
 		autoRefresh.className = '';
-	}else{
-		interval = setInterval(play, 2000);
-		autoRefresh.className = 'active';
 	}
-	localStorage.setItem('autoRefresh', !!interval);
+	localStorage.setItem('autoRefresh', forceOn);
 }
 
 // Init =======================================================================
@@ -151,10 +156,12 @@ if( typeof userId === 'undefined'
 	console.log('user', userId);
 }
 
-// TODO: make things not so backwards for autorefresh
 //interval = !localStorage.getItem('autoRefresh');
-interval = true; // For now, start with autorefresh Off. (set to true because we toggle it.)
-toggleAutoRefresh();
+// For now, start with autorefresh On.
+// and then have it shut off after just one update.
+toggleAutoRefresh(true);
+setTimer(toggleAutoRefresh, 1250);
+
 display.innerHTML = history;
 display.scrollTop = display.scrollHeight;
 
