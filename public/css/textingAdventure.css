@@ -1,0 +1,89 @@
+html, body
+{
+	color: #ccc;
+	background-color: #555;
+	font-size: 8pt;
+	font-family: monospace;
+	margin: 0;
+	padding: 0;
+}
+
+h2
+{
+	color: #fff;
+	font-family: serif;
+	font-size: 14pt;
+}
+
+#closeButton
+{
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 24px;
+	height: 24px;
+	color: #555;
+	font-size: 16px;
+	text-align: center;
+	line-height: 24px;
+	cursor: pointer;
+	border-radius: 12px;
+	color: #ccc;
+}
+
+#closeButton:hover
+{
+	background-color: #333;
+}
+
+#closeButton:active
+{
+	color: #888;
+	background-color: #333;
+}
+
+
+#cli
+{
+	position: fixed;
+	overflow: hidden;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	background-color: #555;
+	padding: 10px;
+	font-size: 12pt;
+}
+
+
+#display
+{
+	position: fixed;
+	overflow-y: scroll;
+	word-wrap: break-word;
+	width: 100%;
+    height: -moz-calc(100% - 74px);
+    height: -webkit-calc(100% - 74px);
+    height: calc(100% - 74px);
+    top: 24px;
+    left: 0px;
+    background-color: #000;
+}
+
+#display::-webkit-scrollbar-track
+{
+	background-color: #000;
+}
+
+#display::-webkit-scrollbar
+{
+	width: 12px;
+}
+
+#display::-webkit-scrollbar-thumb
+{
+	background-color: #333;
+	border: 2px solid #aaa;
+	border-radius: 10px;
+}

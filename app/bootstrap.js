@@ -71,55 +71,8 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 		return array;
 	}
 
-	// A basic ZVM runner
-	function runner( vm, inputCommandsArray )	{
-		var orders, order, code, i, len;
-		inputCommandsArray = inputCommandsArray || [];
-		
-		vm.run();
-		
-		while ( true ) {
-			orders = vm.orders;
-			i = 0;
-			len = orders.length;
-			
-			// Process the orders
-			while ( i < len ) {
-				order = orders[i++];
-				code = order.code;
-				
-				// Text output
-				// We don't do much, just add it to a string on the vm object
-				if ( code === 'stream' ) {
-					// Skip status line updates
-					if ( order.to === 'status' )
-					{
-						continue;
-					}
-					vm.log += order.text || '';
-				}
-				
-				// Line input
-				else if ( code === 'read' && inputCommandsArray.length ) {
-					order.response = inputCommandsArray.shift();
-					vm.inputEvent( order ); // Calls run
-				}
-				
-				else if ( code === 'find' ) {
-					continue;
-				}
-				
-				// Return on anything else
-				else
-				{
-					return;
-				}
-			}
-		}
-	}
-
-	// A simple function to run a particular story, optionally with a list of commands
-	exports.zvm = function( path, inputCommandsArray )
+	// Creates a new VM, initialized with the given story
+	exports.zvm = function( path, outputEventCallback )
 	{
 		var fs = require( 'fs' );
 		var iconv = require( 'iconv-lite' );
@@ -128,16 +81,14 @@ Once the list is complete, the VM is handed back to you, and you can do what you
 		var data = iconv.decode( fs.readFileSync( path ), 'latin1' );
 		
 		var vm = new ZVM();
+		vm.outputEvent = outputEventCallback;
 		vm.inputEvent({
 			code: 'load',
 			data: text_to_array( data )
 		});
-		vm.restart();
+		vm.inputBuffer = [];
 		vm.log = '';
-		runner( vm, inputCommandsArray );
+		vm.restart();
 		return vm;
 	};
-
-	exports.runner = runner;
-
 })();

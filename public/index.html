@@ -1,9 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link href="./css/textingAdventure.css" rel="stylesheet">
 </head>
 <body>
-	<h1>Texting Adventure</h1>
-	Play interactive fiction games over SMS.
+	<div id="display"></div>
+	<div id="cli">&gt;</div>
+	<div id="closeButton">X</div>
+<script>
+const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
+	'<b><i>A browser and SMS based interactive fiction player</i></b><br />\n' +
+	'<br />\n' +
+	'You can play the game here in the web browser,<br />\n' +
+	'or try texting to <b>19282388797</b><br />\n';
+
+var userId = localStorage.getItem('userId'),
+	history = DEFAULT_HISTORY,
+	textBuffer = '',
+	interval = 0,
+	display = document.getElementById('display'),
+	cli = document.getElementById('cli'),
+	closeButton = document.getElementById('closeButton');
+
+
+
+// Send user input to the server and get back game text
+// This is also called without sending any user input to
+// pull timed data from the server.
+// TODO: Need to implement a 'push' behavior from the server
+function play(text) {
+	var xmlhttp = new XMLHttpRequest(),
+		url = '/play?userId=' + encodeURIComponent(userId),
+		data;
+	
+	if(typeof text === 'string'){
+		url += '&text=' + encodeURIComponent(text);
+	}
+
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == XMLHttpRequest.DONE 
+			&& xmlhttp.status == 200
+		){
+			data = xmlhttp.responseText
+			data = data.replace(/\\r/g, '\\n');
+			data = JSON.parse(data)
+			data = data.text || '';
+			
+			// HTML Encode
+			data = data.replace(/&/g, '&amp;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&apos;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/  /g, '&nbsp; ')
+				.replace(/\n/g, '<br />\n');
+
+			history += data;
+			display.innerHTML = history;
+			display.scrollTop = display.scrollHeight;
+
+		}
+	};
+
+	xmlhttp.open('GET', url, true);
+	xmlhttp.send();
+	console.log('Play Request Sent');
+}
+
+// Wipes out the session on the server and clears the display
+function kill() {
+	var xmlhttp = new XMLHttpRequest(),
+		url = '/kill?userId=' + encodeURIComponent(userId);
+	xmlhttp.open('GET', url, true);
+	xmlhttp.send();
+	console.log('Kill Request Sent');
+	
+	clearInterval(interval);
+	display.innerHTML += '<br />\nSession Ended';
+	history = DEFAULT_HISTORY;
+	textBuffer = '';
+	display.scrollTop = display.scrollHeight;
+}
+
+
+// Buffer user key strokes until a carriage return.
+// Then we send the input to the server
+function keypress(event){
+	var key = event.keyCode || event.which,
+		keyChar = String.fromCharCode(key);
+	
+	if (key === 13 || key === 10) {
+		if( textBuffer === 'restart' ){
+			kill();
+			return;
+		}
+		
+		clearInterval(interval);
+		interval = setInterval(play, 2000);
+
+		play(textBuffer);
+		textBuffer = '';
+		cli.innerHTML = '&gt;';
+	} else {
+		cli.innerHTML += keyChar;
+		textBuffer += keyChar;
+	}
+}
+
+
+// Init =======================================================================
+window.addEventListener('keypress', keypress);
+closeButton.addEventListener('click', kill);
+if( typeof userId === 'undefined' 
+	|| userId === null 
+	|| typeof userId !== 'string' 
+	|| userId.length < 10 
+){
+	// Create a random userID, large enough that we don't have collisions
+	userId = Math.random().toString(36).slice(2,12);
+	localStorage.setItem('userId', userId);
+	console.log('user', userId);
+}
+interval = setInterval(play, 2000);
+
+
+</script>
 </body>
 </html>

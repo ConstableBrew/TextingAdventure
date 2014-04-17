@@ -450,7 +450,7 @@ Todo:
 
 if ( DEBUG )
 {
-	console.log( 'bytearray.js: ' + ( typeof DataView !== 'undefined' ? 'Native DataView' : 'Emulating DataView' ) );
+	log( 'bytearray.js: ' + ( typeof DataView !== 'undefined' ? 'Native DataView' : 'Emulating DataView' ) );
 }
 
 //var native_bytearrays = DataView,
@@ -3263,10 +3263,7 @@ disassemble: function()
 		// Check for missing opcodes
 		if ( !opcodes[code] )
 		{
-			if ( DEBUG )
-			{
-				console.log( '' + context );
-			}
+			log( '' + context );
 			this.stop = 1;
 			throw new Error( 'Unknown opcode #' + code + ' at pc=' + offset );
 		}
@@ -3480,7 +3477,7 @@ disassemble: function()
 				this.variable( data.storer, 0 );
 			}
 		}
-		
+
 		// Handle line input
 		if ( code === 'read' )
 		{
@@ -3553,9 +3550,9 @@ disassemble: function()
 				this.ret( result );
 			}
 			
-			// Or if more than five seconds has passed, however only check every 50k times
+			// Or if more than three seconds has passed, however only check every 10k times
 			// What's the best time for this?
-			if ( ++count % 50000 === 0 && ( (new Date()) - now ) > 5000 )
+			if ( ++count % 10000 === 0 && ( (new Date()) - now ) > 3000 )
 			{
 				this.act( 'tick' );
 				return;
@@ -3578,7 +3575,7 @@ disassemble: function()
 			}
 			if ( debugflags.jit )
 			{
-				console.log( code );
+				log( code );
 			}
 			// We use eval because Firebug can't profile new Function
 			// The 0, is to make IE8 work. h/t Secrets of the Javascript Ninja
@@ -3660,6 +3657,60 @@ BSD licenced
 http://github.com/curiousdannii/ifvms.js
 
 */
+
+// Simplifies text input to the VM
+VM.prototype.inputText = function inputText( text ) {
+	this.inputBuffer.push(text);
+}
+
+// Simplifies text output from the VM
+VM.prototype.getText = function getText( clearLog ) {
+	var output = this.log;
+	if( clearLog ){ this.log = ''; }
+	return output;
+}
+
+// A basic ZVM runner
+// Handles stream output from the vm, parsing text to vm.log
+VM.prototype.go = function go() {
+	var orders = this.orders, 
+		order , code, i, len;
+
+	this.run();
+
+	for(i=0; i < orders.length; ++i){
+		order = orders[i];
+		code = order.code;
+
+		if(code === 'stream'){
+			// Text output
+			if(order.to !== 'status'){
+				this.log += order.text || '';
+			}
+		} else if(code === 'read' && this.inputBuffer.length) {
+			// Text input
+			order.response = this.inputBuffer.shift();
+			order.len = order.response.length;
+			this.inputEvent(order); // Calls run
+		} else if(code === 'char' && this.inputBuffer.length) {
+			// Char input
+			order.response = this.inputBuffer[0].slice(0,1);
+			order.len = 1;
+			this.inputBuffer[0] = this.inputBuffer[0].slice(1);
+			if(!this.inputBuffer[0].length){ this.inputBuffer.shift(); }
+			this.inputEvent(order); // Calls run
+		} else if(code === 'find') {
+			// No op
+		} else if(code === 'time') {
+			// Delay ??
+			// Use websockets?
+		} else {
+			log('function go() exit on code:' + code);
+			return; // return on anything else
+		}
+	}
+}
+
 
 // Export the VM in node.js
 if ( typeof module === "object" && typeof module.exports === "object" )
