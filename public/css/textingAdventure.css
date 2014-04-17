@@ -31,17 +31,34 @@ h2
 	color: #ccc;
 }
 
-#closeButton:hover
+#closeButton:hover, #autoRefresh:hover
 {
 	background-color: #333;
 }
 
-#closeButton:active
+#closeButton:active, #autoRefresh:active
 {
 	color: #888;
 	background-color: #333;
 }
 
+
+#autoRefresh
+{
+	position: fixed;
+	bottom: 20px;
+	right: 10px;
+	font-size: 8pt;
+	border-radius: 12px;
+	cursor: pointer;
+}
+
+#autoRefresh.active
+{
+	-webkit-box-shadow: 1px 0px 20px 4px rgba(255, 50, 50, 0.75);
+	-moz-box-shadow:    1px 0px 20px 4px rgba(255, 50, 50, 0.75);
+	box-shadow:         1px 0px 20px 4px rgba(255, 50, 50, 0.75);
+}
 
 #cli
 {
@@ -63,12 +80,13 @@ h2
 	overflow-y: scroll;
 	word-wrap: break-word;
 	width: 100%;
-    height: -moz-calc(100% - 74px);
     height: -webkit-calc(100% - 74px);
-    height: calc(100% - 74px);
+	height:    -moz-calc(100% - 74px);
+    height:         calc(100% - 74px);
     top: 24px;
     left: 0px;
     background-color: #000;
+    padding: 10px;
 }
 
 #display::-webkit-scrollbar-track

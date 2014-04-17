@@ -22,7 +22,7 @@ function handleGameInput(user, input, game){
 	if (typeof game === 'undefined') {
 		// Create a new game
 		log('New user ' + user);
-		game = ifvms.zvm(config.defaultStoryPath, log);
+		game = ifvms.zvm(config.defaultStoryPath); //, log);
 		database.activeGames[user] = game;
 	}else{
 		// Continue an existing game
@@ -32,13 +32,12 @@ function handleGameInput(user, input, game){
 	if(typeof input === 'string'){
 		input = input.split('\n');
 		input.forEach(function(e){
-			log('parsing line of input Text: ' + e);
 			game.inputText(e);
 		});
 	}
 
 	game.go();
-	game.go();game.go();game.go();
+	game.go();
 	output = game.getText(true);
 	return output;
 }
@@ -76,7 +75,6 @@ app.get('/smsinbound', function(req, res){
 		game = database.activeGames[user];
 
 		output = handleGameInput(user, input, game);
-		log(output);
 		//output = JSON.stringify(output).replace(/\\r/g, '\n');
 		//output = JSON.parse(output);
 		//sms.sendTextMessage(user, output.slice(-3000));

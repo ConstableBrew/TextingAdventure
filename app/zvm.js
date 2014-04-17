@@ -450,7 +450,7 @@ Todo:
 
 if ( DEBUG )
 {
-	log( 'bytearray.js: ' + ( typeof DataView !== 'undefined' ? 'Native DataView' : 'Emulating DataView' ) );
+	console.log( 'bytearray.js: ' + ( typeof DataView !== 'undefined' ? 'Native DataView' : 'Emulating DataView' ) );
 }
 
 //var native_bytearrays = DataView,
@@ -3263,7 +3263,7 @@ disassemble: function()
 		// Check for missing opcodes
 		if ( !opcodes[code] )
 		{
-			log( '' + context );
+			console.log( '' + context );
 			this.stop = 1;
 			throw new Error( 'Unknown opcode #' + code + ' at pc=' + offset );
 		}
@@ -3575,7 +3575,7 @@ disassemble: function()
 			}
 			if ( debugflags.jit )
 			{
-				log( code );
+				console.log( code );
 			}
 			// We use eval because Firebug can't profile new Function
 			// The 0, is to make IE8 work. h/t Secrets of the Javascript Ninja
@@ -3690,24 +3690,23 @@ VM.prototype.go = function go() {
 		} else if(code === 'read' && this.inputBuffer.length) {
 			// Text input
 			order.response = this.inputBuffer.shift();
-			order.len = order.response.length;
 			this.inputEvent(order); // Calls run
 		} else if(code === 'char' && this.inputBuffer.length) {
 			// Char input
+			// Grab just one character from the input buffer
+			// TODO: this is sloppy...
 			order.response = this.inputBuffer[0].slice(0,1);
-			order.len = 1;
 			this.inputBuffer[0] = this.inputBuffer[0].slice(1);
 			if(!this.inputBuffer[0].length){ this.inputBuffer.shift(); }
 			this.inputEvent(order); // Calls run
 		} else if(code === 'find') {
 			// No op
-		} else if(code === 'time') {
-			// Delay ??
-			// Use websockets?
 		} else {
-			log('function go() exit on code:' + code);
-			return; // return on anything else
+			//log('function go() exit on code:' + code);
+			//return; // return on anything else
 		}
+
+		orders.splice(i--,1); // TODO: Not sure if I should be doing this... but it gets rid of duplicate stream messages
 	}
 }
 

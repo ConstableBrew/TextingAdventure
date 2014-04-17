@@ -7,12 +7,22 @@
 	<div id="display"></div>
 	<div id="cli">&gt;</div>
 	<div id="closeButton">X</div>
+	<div id="autoRefresh">auto update</div>
 <script>
 const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
 	'<b><i>A browser and SMS based interactive fiction player</i></b><br />\n' +
 	'<br />\n' +
 	'You can play the game here in the web browser,<br />\n' +
-	'or try texting to <b>19282388797</b><br />\n';
+	'or try texting to <b>19282388797</b><br />\n' +
+	'<br />\n' +
+	'Known Bugs:<br />\n' +
+	'*Extra line of input (blank) is being created somewhere.<br />\n' +
+	'This causes there to always be a response "I beg your pardon?"<br />\n' +
+	'*Input gets behind, so you see the response for your previous submit<br />\n' +
+	'instead of your current submit.<br />\n' +
+	'<br />\n' + 
+	'<br />\n' + 
+	'To get started, just type the word "about" and press enter.<br />\n';
 
 var userId = localStorage.getItem('userId'),
 	history = DEFAULT_HISTORY,
@@ -20,7 +30,8 @@ var userId = localStorage.getItem('userId'),
 	interval = 0,
 	display = document.getElementById('display'),
 	cli = document.getElementById('cli'),
-	closeButton = document.getElementById('closeButton');
+	closeButton = document.getElementById('closeButton'),
+	autoRefresh = document.getElementById('autoRefresh');
 
 
 
@@ -75,7 +86,9 @@ function kill() {
 	xmlhttp.send();
 	console.log('Kill Request Sent');
 	
-	clearInterval(interval);
+	if(interval){
+		toggleAutoRefresh();
+	}
 	display.innerHTML += '<br />\nSession Ended';
 	history = DEFAULT_HISTORY;
 	textBuffer = '';
@@ -94,9 +107,12 @@ function keypress(event){
 			kill();
 			return;
 		}
-		
-		clearInterval(interval);
-		interval = setInterval(play, 2000);
+
+		if(interval){
+			// Delay the interval since we just made a request
+			clearInterval(interval);
+			interval = setInterval(play, 2000);
+		}
 
 		play(textBuffer);
 		textBuffer = '';
@@ -107,10 +123,23 @@ function keypress(event){
 	}
 }
 
+function toggleAutoRefresh(){
+	// Toggle auto polling interval
+	if(interval){
+		clearInterval(interval);
+		interval = 0;
+		autoRefresh.className = '';
+	}else{
+		interval = setInterval(play, 2000);
+		autoRefresh.className = 'active';
+	}
+	localStorage.setItem('autoRefresh', !!interval);
+}
 
 // Init =======================================================================
 window.addEventListener('keypress', keypress);
 closeButton.addEventListener('click', kill);
+autoRefresh.addEventListener('click', toggleAutoRefresh);
 if( typeof userId === 'undefined' 
 	|| userId === null 
 	|| typeof userId !== 'string' 
@@ -121,8 +150,12 @@ if( typeof userId === 'undefined'
 	localStorage.setItem('userId', userId);
 	console.log('user', userId);
 }
-interval = setInterval(play, 2000);
 
+//interval = !localStorage.getItem('autoRefresh');
+interval = true; // For now, start with autorefresh off.
+toggleAutoRefresh();
+display.innerHTML = history;
+display.scrollTop = display.scrollHeight;
 
 </script>
 </body>
