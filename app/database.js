@@ -1,1 +1,1 @@
-exports.activeGames = {};
+// TODO: Save user game state to a database to actively manage server memory

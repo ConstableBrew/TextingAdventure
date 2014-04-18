@@ -2,8 +2,7 @@ html, body
 {
 	color: #ccc;
 	background-color: #555;
-	font-size: 9pt;
-	
+	font-size: 12pt;
 	margin: 0;
 	padding: 0;
 }
@@ -65,14 +64,44 @@ h2
 	position: fixed;
 	overflow: hidden;
 	bottom: 0;
-	left: 0;
-	width: 100%;
+	left: 32px;
+	width: -webkit-calc(100% - 32px);
+	width:    -moz-calc(100% - 32px);
+	width:         calc(100% - 32px);
 	height: 30px;
-	background-color: #555;
-	padding: 10px;
 	font-size: 12pt;
 	font-family: monospace;
-	opacity: 0.9;
+	line-height: 30px;
+	color: #ccc;
+	background-color: #555;
+	padding: 10px;
+	border: 2px solid #ccc;
+	border-left: 0px;
+	padding-left: 0px;
+}
+#cli:focus
+{
+	outline: none;
+}
+
+#cliBracket
+{
+	position: fixed;
+	overflow: hidden;
+	bottom: 0px;
+	left: 0px;
+	width: 20px;
+	height: 30px;
+	height: 30px;
+	font-size: 12pt;
+	font-family: monospace;
+	line-height: 30px;
+	color: #ccc;
+	background-color: #555;
+	padding: 10px;
+	border: 2px solid #ccc;
+	border-right: 0px;
+	padding-right: 0px;
 }
 
 
@@ -81,16 +110,16 @@ h2
 	position: fixed;
 	overflow-y: scroll;
 	word-wrap: break-word;
-    width: -webkit-calc(100% - 20px);
+	width: -webkit-calc(100% - 20px);
 	width:    -moz-calc(100% - 20px);
-    width:         calc(100% - 20px);
-    height: -webkit-calc(100% - 98px);
+	width:         calc(100% - 20px);
+	height: -webkit-calc(100% - 98px);
 	height:    -moz-calc(100% - 98px);
-    height:         calc(100% - 98px);
-    top: 24px;
-    left: 0px;
-    background-color: #000;
-    padding: 10px;
+	height:         calc(100% - 98px);
+	top: 24px;
+	left: 0px;
+	background-color: #000;
+	padding: 10px;
 }
 
 #display::-webkit-scrollbar-track

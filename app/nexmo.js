@@ -69,7 +69,7 @@ function sendMessage(data, callback) {
 		sendError(callback, new Error(ERROR_MESSAGES.to));
 	} else {
 		var path = msgpath + '&' + querystring.stringify(data);
-		log('sending message from ' + data.from + ' to ' + data.to + ' with message ' + data.text);
+		log('sending message from ' + data.from + ' to ' + data.to);
 		sendRequest(path, 'POST', function(err, apiResponse) {
 			if (!err && apiResponse.status && apiResponse.messages[0].status > 0) {
 				sendError(callback, new Error(apiResponse.messages[0]['error-text']), apiResponse);
@@ -97,18 +97,14 @@ function sendRequest(path, method, callback) {
 	},
 	request = https.request(options),
 	responseReturn='';
-	log(request);
 
 	request.end();
-	request.on('response', function(response){ 
-		log('nexmo response started');
+	request.on('response', function(response){
 		response.setEncoding('utf8'); 
-		response.on('data', function(chunk){ 
-			log('nexmo data received');
+		response.on('data', function(chunk){
 			responseReturn += chunk;
 		});
-		response.on('end',function(){ 
-			log('nexmo response ended with responseReturn data:' + responseReturn);
+		response.on('end',function(){
 			if (callback) {
 				var retJson = responseReturn,
 					err = null;
@@ -116,22 +112,16 @@ function sendRequest(path, method, callback) {
 				   retJson = JSON.parse(responseReturn);
 				} catch (parsererr) {
 					// ignore parser error for now and send raw response to client
-					log(parsererr);
-					log('could not convert API response to JSON, above error is ignored and raw API response is returned to client');
 					err = parsererr;
 				}
 				callback(err, retJson);
 			}
 		});
 		response.on('close', function(e) {
-  			log('problem with API request detailed stacktrace below ');
-			log(e);
 			callback(e);
 		});
 	});
 	request.on('error', function(e) {
-  		log('problem with API request detailed stacktrace below ');
-		log(e);
 		callback(e);
 	});
 }

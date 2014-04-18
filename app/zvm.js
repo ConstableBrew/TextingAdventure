@@ -3,49 +3,14 @@
 ZVM - the ifvms.js Z-Machine (versions 5 and 8)
 ===============================================
 
-Built: 2013-11-09
+Built: 2013-11-07
 
-=============
-Copyright 2014 Michael Brewer <constablebrew@gmail.com>
-Copyright 2013 The ifvms.js contributors (see CONTRIBUTORS)
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-  * Redistributions of source code must retain the above copyright notice,
-    this list of conditions, and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions, and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the author of this software nor the name of
-    contributors to this software may be used to endorse or promote products
-    derived from this software without specific prior written consent.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-
-
-
-CONTRIBUTORS
-The ifvms.js team
-=================
-
-Dannii Willis <curiousdannii@gmail.com>
-
-
+Copyright (c) 2011-2013 The ifvms.js team
+BSD licenced
 http://github.com/curiousdannii/ifvms.js
 
 */
+
 /*
 
 ZVM willfully ignores the standard in these ways:
@@ -1255,7 +1220,7 @@ var ZVMUI = Class.subClass({
 				text: this.buffer,
 				props: this.format()
 			};
-
+			
 			( this.currentwin ? this.status : this.e.orders ).push( order );
 			this.buffer = '';
 		}
@@ -1802,16 +1767,6 @@ TODO:
 	// Call a routine
 	call: function( addr, storer, next, args )
 	{
-		// 6.4.3: Calls to 0 instead just store 0
-		if ( addr === 0 )
-		{
-			if ( storer >= 0 )
-			{
-				this.variable( storer, 0 );
-			}
-			return this.pc = next;
-		}
-		
 		var i,
 		locals_count,
 		old_locals_count = this.l.length,
@@ -2481,7 +2436,7 @@ TODO:
 		// Store the result if there is one
 		if ( storer >= 0 )
 		{
-			this.variable( storer, result | 0 );
+			this.variable( storer, result );
 		}
 	},
 	
@@ -3263,7 +3218,10 @@ disassemble: function()
 		// Check for missing opcodes
 		if ( !opcodes[code] )
 		{
-			console.log( '' + context );
+			if ( DEBUG )
+			{
+				console.log( '' + context );
+			}
 			this.stop = 1;
 			throw new Error( 'Unknown opcode #' + code + ' at pc=' + offset );
 		}
@@ -3477,7 +3435,7 @@ disassemble: function()
 				this.variable( data.storer, 0 );
 			}
 		}
-
+		
 		// Handle line input
 		if ( code === 'read' )
 		{
@@ -3505,7 +3463,6 @@ disassemble: function()
 			{
 				// Tokenise the response
 				this.tokenise( data.buffer, data.parse );
-				log('3511 inputEvent() ');
 			}
 		}
 		
@@ -3551,9 +3508,9 @@ disassemble: function()
 				this.ret( result );
 			}
 			
-			// Or if more than three seconds has passed, however only check every 10k times
+			// Or if more than five seconds has passed, however only check every 50k times
 			// What's the best time for this?
-			if ( ++count % 10000 === 0 && ( (new Date()) - now ) > 3000 )
+			if ( ++count % 50000 === 0 && ( (new Date()) - now ) > 5000 )
 			{
 				this.act( 'tick' );
 				return;
@@ -3658,64 +3615,6 @@ BSD licenced
 http://github.com/curiousdannii/ifvms.js
 
 */
-
-// Simplifies text input to the VM
-VM.prototype.inputText = function inputText( text ) {
-	this.inputBuffer.push(text);
-}
-
-// Simplifies text output from the VM
-VM.prototype.getText = function getText( clearLog ) {
-	var output = this.log;
-	if( clearLog ){ this.log = ''; }
-	return output;
-}
-
-// A basic ZVM runner
-// Handles stream output from the vm, parsing text to vm.log
-VM.prototype.go = function go() {
-	var orders = this.orders, 
-		order , code, i, len,
-		input;
-
-	this.run();
-
-	for(i=0; i < orders.length; ++i){
-		order = orders[i];
-		code = order.code;
-
-		if(code === 'stream'){
-			// Text output
-			if(order.to !== 'status'){
-				this.log += order.text || '';
-			}
-		} else if(code === 'read' && this.inputBuffer.length) {
-			// Text input
-			input = this.inputBuffer.shift();
-			log('input for read:"' + input + '"');
-			order.response = input;
-			this.inputEvent(order); // Calls run
-		} else if(code === 'char' && this.inputBuffer.length) {
-			// Char input
-			// Grab just one character from the input buffer
-			// TODO: this is sloppy...
-			input = this.inputBuffer[0].slice(0,1);
-			order.response = input;
-			this.inputBuffer[0] = this.inputBuffer[0].slice(1);
-			log('input for char:"' + input + '"');
-			log('revised input buffer:' + this.inputBuffer[0])
-			if(!this.inputBuffer[0].length){ this.inputBuffer.shift(); }
-			this.inputEvent(order); // Calls run
-		} else if(code === 'find') {
-			// No op
-		} else {
-			return; // return on anything else
-		}
-
-		//orders.splice(i--,1); // TODO: Not sure if I should be doing this... but it gets rid of duplicate stream messages
-	}
-}
-
 
 // Export the VM in node.js
 if ( typeof module === "object" && typeof module.exports === "object" )

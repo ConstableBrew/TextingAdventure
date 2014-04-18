@@ -5,10 +5,12 @@
 </head>
 <body>
 	<div id="display"></div>
-	<div id="cli">&gt;</div>
+	<input type="text" id="cli"></input>
+	<div id="cliBracket">$&gt;</div>
 	<div id="closeButton">X</div>
 	<div id="autoRefresh">auto update</div>
 <script>
+const AUTO_UPDATE_SPEED = 1500; // How many miliseconds between auto updates (when auto updates are turned on)
 const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
 	'<b><i>A browser and SMS based interactive fiction player</i></b><br />\n' +
 	'<br />\n' +
@@ -45,7 +47,7 @@ var userId = localStorage.getItem('userId'),
 // TODO: Need to implement a 'push' behavior from the server
 function play(text) {
 	var xmlhttp = new XMLHttpRequest(),
-		url = '/play?userId=' + encodeURIComponent(userId),
+		url = '/ta?userId=' + encodeURIComponent(userId),
 		data;
 	
 	if(typeof text === 'string'){
@@ -57,9 +59,7 @@ function play(text) {
 			&& xmlhttp.status == 200
 		){
 			data = xmlhttp.responseText
-			data = data.replace(/\\r/g, '\\n');
-			data = JSON.parse(data)
-			data = data.text || '';
+			data = data.replace(/\r/g, '\n');
 			
 			// HTML Encode
 			data = data.replace(/&/g, '&amp;')
@@ -79,23 +79,20 @@ function play(text) {
 
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send();
-	console.log('Play Request Sent');
 }
 
 // Wipes out the session on the server and clears the display
-function kill() {
+function quit() {
 	var xmlhttp = new XMLHttpRequest(),
-		url = '/kill?userId=' + encodeURIComponent(userId);
+		url = '/quit?userId=' + encodeURIComponent(userId);
+	
+	toggleAutoUpdate(false);
+
 	xmlhttp.open('GET', url, true);
 	xmlhttp.send();
-	console.log('Kill Request Sent');
 	
-	if(interval){
-		toggleAutoRefresh();
-	}
-	display.innerHTML += '<br />\nSession Ended';
-	history = DEFAULT_HISTORY;
-	textBuffer = '';
+	history += '<br />\nSession Ended'
+	display.innerHTML = history;
 	display.scrollTop = display.scrollHeight;
 }
 
@@ -103,33 +100,19 @@ function kill() {
 // Buffer user key strokes until a carriage return.
 // Then we send the input to the server
 function keypress(event){
-	var key = event.keyCode || event.which,
-		keyChar = String.fromCharCode(key);
+	var key = event.keyCode || event.which;
 	
-	if (key === 13 || key === 10) {
-		if( textBuffer === 'restart' ){
-			kill();
-			return;
-		}
-
-		if(interval){
-			// Delay the interval since we just made a request
-			clearInterval(interval);
-			interval = setInterval(play, 2000);
-		}
-
-		play(textBuffer);
-		textBuffer = '';
-		cli.innerHTML = '&gt;';
-	} else {
-		cli.innerHTML += keyChar;
-		textBuffer += keyChar;
+	if (key === 13) {
+		clearInterval(interval); // Delay the interval since we are going to make a request right now
+		play(cli.value + '\n');
+		if(interval){ interval = setInterval(play, AUTO_UPDATE_SPEED); }
+		cli.value = ''; // Command is sent, so now we clear the input line
 	}
 }
 
-function toggleAutoRefresh(forceOn){
+function toggleAutoUpdate(forceOn){
 	// Toggle auto polling interval
-	forceOn = forceOn || !interval;
+	forceOn = (typeof forceOn !== 'undefined' && !!forceOn) || (typeof forceOn === 'undefined' && !interval);
 	if(forceOn){
 		interval = setInterval(play, 1000);
 		autoRefresh.className = 'active';
@@ -142,9 +125,11 @@ function toggleAutoRefresh(forceOn){
 }
 
 // Init =======================================================================
-window.addEventListener('keypress', keypress);
-closeButton.addEventListener('click', kill);
-autoRefresh.addEventListener('click', toggleAutoRefresh);
+cli.addEventListener('keypress', keypress);
+closeButton.addEventListener('click', quit);
+closeButton.addEventListener('touchend', quit);
+autoRefresh.addEventListener('click', function(){toggleAutoUpdate();});
+autoRefresh.addEventListener('touchend', function(){toggleAutoUpdate();});
 if( typeof userId === 'undefined' 
 	|| userId === null 
 	|| typeof userId !== 'string' 
@@ -153,17 +138,13 @@ if( typeof userId === 'undefined'
 	// Create a random userID, large enough that we don't have collisions
 	userId = Math.random().toString(36).slice(2,12);
 	localStorage.setItem('userId', userId);
-	console.log('user', userId);
 }
 
 //interval = !localStorage.getItem('autoRefresh');
-// For now, start with autorefresh On.
-// and then have it shut off after just one update.
-toggleAutoRefresh(true);
-setTimer(toggleAutoRefresh, 1250);
-
 display.innerHTML = history;
 display.scrollTop = display.scrollHeight;
+cli.focus();
+play();
 
 </script>
 </body>
