@@ -1,0 +1,13 @@
+exports.port                = process.env.PORT || 8000;
+// exports.defaultStoryPath  = './stories/Zork1.z5';
+//exports.defaultStoryPath  = './stories/cryptographer.z5';
+exports.defaultStoryPath  = './stories/Legend of the Missing Hat.z8';
+// exports.defaultStoryPath    = './stories/quake.z5';
+//exports.defaultStoryPath  = './stories/shade.z5';
+//exports.defaultStoryPath  = './stories/vespers.z8';
+exports.defaultStory        = 'Legend of the Missing Hat';
+exports.storiesPath         = './stories';
+exports.SMS                 = {};
+exports.SMS.apiKey          = '';
+exports.SMS.apiSecret       = '';
+exports.SMS.sender          = '';

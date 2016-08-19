@@ -10,6 +10,8 @@
 	<div id="closeButton">X</div>
 	<div id="autoRefresh">auto update</div>
 <script>
+(function(){
+'use strict';
 const AUTO_UPDATE_SPEED = 1500; // How many miliseconds between auto updates (when auto updates are turned on)
 const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
 	'<b><i>A browser and SMS based interactive fiction player</i></b><br />\n' +
@@ -69,7 +71,6 @@ function play(text) {
 				.replace(/>/g, '&gt;')
 				.replace(/  /g, '&nbsp; ')
 				.replace(/\n/g, '<br />\n');
-
 			history += data;
 			display.innerHTML = history;
 			display.scrollTop = display.scrollHeight;
@@ -145,7 +146,7 @@ display.innerHTML = history;
 display.scrollTop = display.scrollHeight;
 cli.focus();
 play();
-
+})();
 </script>
 </body>
 </html>
