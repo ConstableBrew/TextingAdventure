@@ -2,13 +2,16 @@
 <html>
 <head>
 	<link href="./css/textingAdventure.css" rel="stylesheet">
+	<link rel="stylesheet" href="http://ihazcode.herokuapp.com/nav/nav.css" async>
 </head>
 <body>
+	<nav class="left" xstyle="top:0px;bottom:initial;transform-origin: 0 0;"><label>Cat Herders</label><a class="catherding" href="http://ihazcode.herokuapp.com/catherding/" title="Cat Herders"></a></nav>
+	<nav class="right" xstyle="top:0px;bottom:initial;transform-origin: 100% 0;"><label>Tetris</label><a class="tetris" href="http://ihazcode.herokuapp.com/tetris/" title="Tetris"></a></nav>
 	<div id="display"></div>
 	<input type="text" id="cli"></input>
 	<div id="cliBracket">$&gt;</div>
-	<div id="closeButton">X</div>
-	<div id="autoRefresh">auto update</div>
+	<div id="closeButton" style="display:none;">X</div>
+	<div id="autoRefresh" style="display:none;">auto update</div>
 <script>
 (function(){
 'use strict';
@@ -26,7 +29,8 @@ const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
 	'You can do many more things than just walk around. You may want<br />\n' + 
 	'to try things like "open window", "get knife" or "kill troll with sword".<br />\n' + 
 	'Check out this <a href="./PlaySomeInteractiveFiction.html" target="_blank">handy reference</a> for more helpful tips.<br />\n' + 
-	'<br />\n';
+	'<br />\n' +
+	'================================================================================<br />\n';
 
 var userId = localStorage.getItem('userId'),
 	history = DEFAULT_HISTORY,

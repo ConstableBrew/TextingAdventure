@@ -64,10 +64,8 @@ h2
 	position: fixed;
 	overflow: hidden;
 	bottom: 0;
-	left: 32px;
-	width: -webkit-calc(100% - 32px);
-	width:    -moz-calc(100% - 32px);
-	width:         calc(100% - 32px);
+	left: 72px;
+	width: calc(100% - 155px);
 	height: 30px;
 	font-size: 12pt;
 	font-family: monospace;
@@ -89,7 +87,7 @@ h2
 	position: fixed;
 	overflow: hidden;
 	bottom: 0px;
-	left: 0px;
+	left: 70px;
 	width: 20px;
 	height: 30px;
 	height: 30px;
@@ -113,13 +111,14 @@ h2
 	width: -webkit-calc(100% - 20px);
 	width:    -moz-calc(100% - 20px);
 	width:         calc(100% - 20px);
-	height: -webkit-calc(100% - 98px);
-	height:    -moz-calc(100% - 98px);
-	height:         calc(100% - 98px);
-	top: 24px;
+	height: -webkit-calc(100% - 75px);
+	height:    -moz-calc(100% - 75px);
+	height:         calc(100% - 75px);
+	top:  0px;
 	left: 0px;
 	background-color: #000;
 	padding: 10px;
+	font-family: sans-serif;
 }
 
 #display::-webkit-scrollbar-track
