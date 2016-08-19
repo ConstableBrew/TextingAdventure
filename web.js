@@ -2,15 +2,12 @@
 var express			= require('express');
 var app				= express();
 var fs 				= require('fs');
-var sms 			= require('./app/nexmo.js');
 var ta 				= require('./app/ta.js');
 
 // configuration ==============================================================
 var debugOn 		= true;
 var config 			= require('./app/config/config.js');
-var database		= require('./app/database.js');
 
-sms.initialize(config.SMS.apiKey, config.SMS.apiSecret, config.SMS.sender, debugOn);
 app.use(express.static(__dirname + '/public'));	// Set static file location
 
 
@@ -48,23 +45,6 @@ app.get('/ta', function(req, res){
 	res.send(output);
 });
 
-// Incoming sms messages.
-app.get('/smsinbound', function(req, res){
-	// TODO: Validate query parameters
-	// TODO: limit request.connection.remoteAddress to just the SMS server
-	// TODO: make the URL less guessable by hackers (who could then hijack and use my sms)
-	var output = userInputReceived(req);
-	output = output.replace(/\r/g, '\n')
-		.trim();
-	sms.sendTextMessage(req.query.msisdn, output);
-	res.send(200);
-});
-
-// sms confirmation
-app.get('/smscallback', function(req, res){
-	log(req.query)
-	res.send(200);
-});
 
 // Delete a game
 app.get('/quit', function(req, res){

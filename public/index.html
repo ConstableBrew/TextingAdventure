@@ -14,22 +14,18 @@
 'use strict';
 const AUTO_UPDATE_SPEED = 1500; // How many miliseconds between auto updates (when auto updates are turned on)
 const DEFAULT_HISTORY = '<h2>Texting Adventure!</h2>' +
-	'<b><i>A browser and SMS based interactive fiction player</i></b><br />\n' +
+	'<b><i>A browser based interactive fiction player</i></b><br />\n' +
 	'<br />\n' +
-	'You can play the game here in the web browser,<br />\n' +
-	'or try texting to <b>19282388797</b><br />\n' +
-	'<br />\n' +
-	'Known Bugs:<br />\n' +
-	'*Extra line of input (blank) is being created somewhere.<br />\n' +
-	'This causes there to always be a response "I beg your pardon?"<br />\n' +
-	'*Input gets behind, so you see the response for your previous submit<br />\n' +
-	'instead of your current submit.<br />\n' +
+	'This is something I threw together in about a day\'s time shortly after I really <br />\n' +
+	'started to dig into JavaScript and develop my programming skills, back in Apr 2014. <br />\n' +
+	'Looking at it now (Aug 2016), I feel all icky inside. But, I\'m still proud of this <br />\n' +
+	'and think it is fun, so here it stays!<br />\n' +
 	'<br />\n' + 
 	'<br />\n' + 
 	'To get started, just type the word "south" and press enter.<br />\n' +
 	'You can do many more things than just walk around. You may want<br />\n' + 
 	'to try things like "open window", "get knife" or "kill troll with sword".<br />\n' + 
-	'Check out this <a href="./PlaySomeInteractiveFiction.html">handy reference</a> for more helpful tips.<br />\n' + 
+	'Check out this <a href="./PlaySomeInteractiveFiction.html" target="_blank">handy reference</a> for more helpful tips.<br />\n' + 
 	'<br />\n';
 
 var userId = localStorage.getItem('userId'),
